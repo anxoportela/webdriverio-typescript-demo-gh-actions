@@ -1,4 +1,4 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","466","should add an item to the cart","","Fri Nov 15 08:32:38 UTC 2024","passed","Fri Nov 15 08:32:39 UTC 2024","","SauceDemo Cart","",""
-"","372","should navigate to product detail page","","Fri Nov 15 08:32:39 UTC 2024","passed","Fri Nov 15 08:32:39 UTC 2024","","SauceDemo Product Detail","",""
-"","1743","should log in with valid credentials","","Fri Nov 15 08:32:37 UTC 2024","passed","Fri Nov 15 08:32:38 UTC 2024","","SauceDemo Login","",""
+"","1467","should log in with valid credentials","","Fri Nov 15 08:36:08 UTC 2024","passed","Fri Nov 15 08:36:09 UTC 2024","","SauceDemo Login","",""
+"","317","should navigate to product detail page","","Fri Nov 15 08:36:10 UTC 2024","passed","Fri Nov 15 08:36:10 UTC 2024","","SauceDemo Product Detail","",""
+"","402","should add an item to the cart","","Fri Nov 15 08:36:09 UTC 2024","passed","Fri Nov 15 08:36:10 UTC 2024","","SauceDemo Cart","",""
