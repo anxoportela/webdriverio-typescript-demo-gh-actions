@@ -53,6 +53,10 @@ jobs:
     if: success()
 
     steps:
+      # Checkout the main branch (or the branch you're working with)
+      - name: Checkout repository 🛠️
+        uses: actions/checkout@v4
+
       # Checkout the allure-results branch to access the old results
       - name: Checkout allure-results branch 🧑‍💻
         run: |
