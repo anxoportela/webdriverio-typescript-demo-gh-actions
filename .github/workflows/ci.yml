@@ -41,27 +41,48 @@ jobs:
       - name: Run WebDriverIO tests 🧪
         run: npx wdio run wdio.conf.ts
 
-      - name: Generate Allure Report 📊
-        run: allure generate ./reports/allure-results --clean -o ./allure-report
-
-      - name: Upload Allure Report 📈
-        if: always()
+      - name: Upload Allure Results as Artifact 📦
         uses: actions/upload-artifact@v4
         with:
-          name: allure-report
-          path: ./allure-report  # Path to the generated Allure report
+          name: allure-results
+          path: ./reports/allure-results
+
+      - name: Commit and Push Allure Results to `allure-results` branch 🏁
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+          git checkout --orphan allure-results # Create a new branch (or reset if it exists)
+          git rm -rf . # Clear the branch
+          mv ./reports/allure-results ./allure-results # Move the results to the root
+          git add allure-results
+          git commit -m "Update Allure results"
+          git push --force --set-upstream origin allure-results
 
   deploy:
     runs-on: ubuntu-latest
     needs: test
     if: success()
-    
+
     steps:
-      - name: Download Allure Report 📥
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-report
-          path: ./allure-report  # Where to place the downloaded report
+      - name: Checkout repository 🛠️
+        uses: actions/checkout@v4
+
+      - name: Fetch `allure-results` branch 🧑‍💻
+        run: |
+          git fetch origin allure-results # Fetch the allure-results branch
+          git checkout allure-results # Checkout the branch containing previous results
+
+      - name: Download Allure Results from the branch 📥
+        run: |
+          git checkout allure-results
+          cp -r allure-results/* ./reports/allure-results/ # Copy results to the reports directory
+
+      - name: Install Allure CLI 📦
+        run: npm install -g allure-commandline --save-dev
+
+      - name: Generate Aggregated Allure Report 📊
+        run: |
+          allure generate ./reports/allure-results --clean -o ./allure-report
 
       - name: Deploy Allure Report to GitHub Pages 🌍
         uses: peaceiris/actions-gh-pages@v4
