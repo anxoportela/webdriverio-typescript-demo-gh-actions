@@ -1,0 +1,42 @@
+name: WebDriverIO CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout repository
+      uses: actions/checkout@v4
+    
+    # Step 2: Set up Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '16'
+
+    # Step 3: Install dependencies
+    - name: Install dependencies
+      run: |
+        npm ci
+
+    # Step 4: Run tests with WebDriverIO
+    - name: Run WebDriverIO tests
+      run: |
+        npx wdio run wdio.conf.ts
+
+    # Step 5: Upload the report to GitHub (optional)
+    - name: Upload WebDriverIO report
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: webdriverio-report
+        path: ./results/allure-results
