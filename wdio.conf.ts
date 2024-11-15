@@ -33,8 +33,11 @@ export const config: WebdriverIO.Config = {
         'spec',
         ['allure', {
             outputDir: './reports/allure-results',
-            disableWebdriverStepsReporting: true,
+            disableWebdriverStepsReporting: false,
             disableWebdriverScreenshotsReporting: false,
+            disableWebdriverLogsReporting: false,
+            addConsoleLogs: true,
+            addFailedScreenshots: true,
         }]
     ],
 
