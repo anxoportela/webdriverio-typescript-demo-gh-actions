@@ -53,6 +53,12 @@ jobs:
     if: success()
 
     steps:
+      # Checkout the allure-results branch to access the old results
+      - name: Checkout allure-results branch 🧑‍💻
+        run: |
+          git fetch origin allure-results
+          git checkout allure-results
+
       # Download Allure Report Artifact
       - name: Download Allure Results Artifact 📥
         uses: actions/download-artifact@v4
@@ -60,34 +66,23 @@ jobs:
           name: allure-results
           path: ./new-allure-results # The folder where the artifact will be saved
 
-      # List contents of the directory to verify structure
-      - name: List contents of new-allure-results directory 🗂️
-        run: ls -la ./new-allure-results
-
-      # If the artifact is a zip, unzip it
-      - name: Unzip Allure Results Artifact 📦
-        run: |
-          # Check if there are zip files before unzipping
-          if ls ./new-allure-results/*.zip 1> /dev/null 2>&1; then
-            unzip ./new-allure-results/*.zip -d ./new-allure-results
-          else
-            echo "No zip files found, continuing with extracted results"
-          fi
-
-      # Ensure both old and new results exist
-      - name: Ensure old and new results exist 🔄
+      # Ensure old and new results exist 🔄
+      - name: Combine old and new results 🔄
         run: |
           mkdir -p ./reports/allure-results/old
           mkdir -p ./reports/allure-results/latest
 
-          # Copy the old results from the repository to the old folder
-          cp -r ./allure-results/* ./reports/allure-results/old/
+          # Copy old results from the 'allure-results' branch to the 'old' folder
+          cp -r ./allure-results/* ./reports/allure-results/old/ || echo "No old results to copy"
 
-          # Copy new results to the latest folder
+          # Copy new results to the 'latest' folder
           cp -r ./new-allure-results/* ./reports/allure-results/latest/
 
           # Combine old and new results in the 'latest' folder
           cp -r ./reports/allure-results/old/* ./reports/allure-results/latest/
+
+      - name: Install Allure CLI 📦
+        run: npm install -g allure-commandline --save-dev
 
       # Generate the Allure Report 📊
       - name: Generate Allure Report 📈
