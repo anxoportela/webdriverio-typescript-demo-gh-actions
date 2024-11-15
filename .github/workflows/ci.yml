@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       trigger:
-        description: 'Trigger the workflow (set to true)'
+        description: "Trigger the workflow (set to true)"
         required: true
-        default: 'false'
+        default: "false"
   push:
     branches:
       - main
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js 🧑‍💻
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Cache Node.js modules 🗃️
         uses: actions/cache@v4
@@ -45,7 +45,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: allure-results
-          path: ./reports/allure-results  # Upload the generated results as an artifact
+          path: ./reports/allure-results # Upload the generated results as an artifact
 
   deploy:
     runs-on: ubuntu-latest
@@ -53,23 +53,21 @@ jobs:
     if: success()
 
     steps:
-      - name: Checkout repository 🛠️
-        uses: actions/checkout@v4
-
-      - name: Fetch existing allure-results from the repository 🧑‍💻
-        run: |
-          git fetch origin allure-results
-          git checkout allure-results
-
-      - name: Download Allure Results Artifact 📦
+      # Download Allure Report Artifact
+      - name: Download Allure Results Artifact 📥
         uses: actions/download-artifact@v4
         with:
           name: allure-results
-          path: ./new-allure-results  # Download the new results from the test job
+          path: ./new-allure-results # The folder where the artifact will be saved
 
-      - name: Preserve old Allure results and merge new results 📊
+      # Unzip the downloaded Allure Results Artifact
+      - name: Unzip Allure Results Artifact 📦
         run: |
-          # Ensure both old and new results exist
+          unzip ./new-allure-results/*.zip -d ./new-allure-results
+
+      # Ensure both old and new results exist
+      - name: Ensure old and new results exist 🔄
+        run: |
           mkdir -p ./reports/allure-results/old
           mkdir -p ./reports/allure-results/latest
 
@@ -82,16 +80,15 @@ jobs:
           # Combine old and new results in the 'latest' folder
           cp -r ./reports/allure-results/old/* ./reports/allure-results/latest/
 
-      - name: Install Allure CLI 📦
-        run: npm install -g allure-commandline --save-dev
-
-      - name: Generate Allure Report 📊
+      # Generate the Allure Report 📊
+      - name: Generate Allure Report 📈
         run: |
           allure generate ./reports/allure-results/latest --clean -o ./allure-report
 
-      - name: Deploy Allure Report to GitHub Pages 🌍
+      # Deploy Allure Report to GitHub Pages 🌍
+      - name: Deploy Allure Report to GitHub Pages 📤
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          publish_dir: ./allure-report
+          publish_dir: ./allure-report # Path to the Allure report
           publish_branch: gh-pages
