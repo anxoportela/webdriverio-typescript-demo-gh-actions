@@ -38,7 +38,6 @@ describe("SauceDemo Cart", () => {
   });
 });
 
-
 describe("SauceDemo Product Detail", () => {
   it("should navigate to product detail page", async () => {
     // Abre la página de SauceDemo
