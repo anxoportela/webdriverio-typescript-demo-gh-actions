@@ -18,12 +18,6 @@ export const config: WebdriverIO.Config = {
             'goog:chromeOptions': {
                 args: ['--headless', '--disable-gpu', '--no-sandbox']
             }
-        },
-        {
-            browserName: 'firefox',
-            'moz:firefoxOptions': {
-                args: ['--headless']
-            }
         }
     ],
 
