@@ -47,17 +47,15 @@ jobs:
           name: allure-results
           path: ./reports/allure-results
 
-      - name: Commit and Push Allure Results to `allure-results` branch 🏁
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "github-actions@github.com"
-          git checkout --orphan allure-results # Create a new branch (or reset if it exists)
-          git rm -rf . # Clear the branch
-          mv ./reports/allure-results ./allure-results # Move the results to the root
-          git add allure-results
-          git commit -m "Update Allure results"
-          git push --force --set-upstream https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} allure-results
-          
+      - name: Commit Allure Results to `allure-results` branch 🏁
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GH_TOKEN }}
+          publish_dir: ./reports/allure-results
+          publish_branch: allure-results
+          user_name: "github-actions"
+          user_email: "github-actions@github.com"
+
   deploy:
     runs-on: ubuntu-latest
     needs: test
@@ -69,13 +67,8 @@ jobs:
 
       - name: Fetch `allure-results` branch 🧑‍💻
         run: |
-          git fetch origin allure-results # Fetch the allure-results branch
-          git checkout allure-results # Checkout the branch containing previous results
-
-      - name: Download Allure Results from the branch 📥
-        run: |
+          git fetch origin allure-results
           git checkout allure-results
-          cp -r allure-results/* ./reports/allure-results/ # Copy results to the reports directory
 
       - name: Install Allure CLI 📦
         run: npm install -g allure-commandline --save-dev
@@ -88,5 +81,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          publish_dir: ./allure-report  # Path to the Allure report in the current directory
+          publish_dir: ./allure-report
           publish_branch: gh-pages
