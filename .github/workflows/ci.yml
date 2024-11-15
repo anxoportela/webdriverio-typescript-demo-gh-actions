@@ -56,8 +56,8 @@ jobs:
           mv ./reports/allure-results ./allure-results # Move the results to the root
           git add allure-results
           git commit -m "Update Allure results"
-          git push --force --set-upstream origin allure-results
-
+          git push --force --set-upstream https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }} allure-results
+          
   deploy:
     runs-on: ubuntu-latest
     needs: test
