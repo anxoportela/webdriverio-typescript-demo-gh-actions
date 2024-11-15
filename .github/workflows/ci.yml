@@ -60,10 +60,19 @@ jobs:
           name: allure-results
           path: ./new-allure-results # The folder where the artifact will be saved
 
-      # Unzip the downloaded Allure Results Artifact
+      # List contents of the directory to verify structure
+      - name: List contents of new-allure-results directory 🗂️
+        run: ls -la ./new-allure-results
+
+      # If the artifact is a zip, unzip it
       - name: Unzip Allure Results Artifact 📦
         run: |
-          unzip ./new-allure-results/*.zip -d ./new-allure-results
+          # Check if there are zip files before unzipping
+          if ls ./new-allure-results/*.zip 1> /dev/null 2>&1; then
+            unzip ./new-allure-results/*.zip -d ./new-allure-results
+          else
+            echo "No zip files found, continuing with extracted results"
+          fi
 
       # Ensure both old and new results exist
       - name: Ensure old and new results exist 🔄
