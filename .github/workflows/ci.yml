@@ -23,20 +23,53 @@ jobs:
       with:
         node-version: '22'
 
-    # Step 3: Install dependencies
+    # Step 3: Cache Node.js modules
+    - name: Cache Node.js modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-node-
+
+    # Step 4: Install dependencies
     - name: Install dependencies
       run: |
-        npm i
+        npm install
 
-    # Step 4: Run tests with WebDriverIO
+    # Step 5: Run tests with WebDriverIO
     - name: Run WebDriverIO tests
       run: |
         npx wdio run wdio.conf.ts
 
-    # Step 5: Upload the report to GitHub (optional)
+    # Step 6: Generate Allure Report
+    - name: Generate Allure Report
+      run: |
+        npm install -g allure-commandline --save-dev  # Install Allure command line tool
+        allure generate ./results/allure-results --clean -o ./allure-report  # Generate the report
+
+    # Step 7: Upload the WebDriverIO report (optional)
     - name: Upload WebDriverIO report
       if: always()
       uses: actions/upload-artifact@v4
       with:
         name: webdriverio-report
         path: ./results/allure-results
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: test
+    if: success()
+
+    steps:
+    # Step 1: Checkout the code again (for deployment)
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Step 2: Deploy the Allure report to GitHub Pages
+    - name: Deploy Allure Report to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GH_TOKEN }}
+        publish_dir: ./allure-report  # Path to the generated Allure report directory
+        publish_branch: gh-pages  # Target branch for GitHub Pages
