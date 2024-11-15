@@ -72,9 +72,11 @@ jobs:
           path: ./complete
 
       - name: Try downloading previous Allure Results Artifact (if available) 📥
-        run: |
-          echo "Attempting to download previous allure-results..."
-          actions/download-artifact@v4 --name previous-allure-results --path ./complete || echo "No previous artifact found."
+        uses: actions/download-artifact@v4
+        with:
+          name: previous-allure-results
+          path: ./complete
+        continue-on-error: true
 
       - name: Install Allure CLI 📦
         run: npm install -g allure-commandline --save-dev
