@@ -72,6 +72,13 @@ jobs:
       - name: Create 'test-history' directory 📁
         run: mkdir -p ./test-history
 
+      # Download the current Allure results from the 'test' job artifact
+      - name: Download current Allure results from test job 📥
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: ./new-results
+
       - name: Create a timestamped directory for the current run 🕒
         run: |
           # Create a new directory using the current timestamp
@@ -79,7 +86,7 @@ jobs:
           mkdir -p "./test-history/$timestamp/allure-results"
           
           # Copy the current results into the timestamped folder
-          cp -r ./reports/allure-results/* "./test-history/$timestamp/allure-results"
+          cp -r ./new-results/* "./test-history/$timestamp/allure-results"
 
       - name: Install Allure CLI 📦
         run: npm install -g allure-commandline --save-dev
