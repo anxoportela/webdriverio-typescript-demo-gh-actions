@@ -4,9 +4,9 @@ on:
   workflow_dispatch:
     inputs:
       trigger:
-        description: 'Trigger the workflow (set to true)'
+        description: "Trigger the workflow (set to true)"
         required: true
-        default: 'false'
+        default: "false"
   push:
     branches:
       - main
@@ -24,7 +24,7 @@ jobs:
       - name: Set up Node.js 🧑‍💻
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: "20"
 
       - name: Cache Node.js modules 🗃️
         uses: actions/cache@v4
