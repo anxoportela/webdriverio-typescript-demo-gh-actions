@@ -70,6 +70,11 @@ jobs:
           git fetch origin allure-results
           git checkout allure-results
 
+      - name: Copy `allure-results` to the report directory 📂
+        run: |
+          mkdir -p ./reports/allure-results  # Ensure the directory exists
+          cp -r allure-results/* ./reports/allure-results/  # Copy results to the reports directory
+
       - name: Install Allure CLI 📦
         run: npm install -g allure-commandline --save-dev
 
