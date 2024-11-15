@@ -46,7 +46,7 @@ jobs:
     - name: Generate Allure Report
       run: |
         npm install -g allure-commandline --save-dev  # Install Allure command line tool
-        allure generate ./results/allure-results --clean -o ./allure-report  # Generate the report
+        allure generate ./reports/allure-results --clean -o ./allure-report  # Generate the report
 
     # Step 7: Upload the WebDriverIO report (optional)
     - name: Upload WebDriverIO report
@@ -54,7 +54,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: webdriverio-report
-        path: ./results/allure-results
+        path: ./reports/allure-results
 
   deploy:
     runs-on: ubuntu-latest
