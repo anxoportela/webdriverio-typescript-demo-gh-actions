@@ -42,9 +42,7 @@ jobs:
         run: npx wdio run wdio.conf.ts
 
       - name: Generate Allure Report 📊
-        run: |
-          npm install -g allure-commandline --save-dev
-          allure generate ./reports/allure-results --clean -o ./allure-report
+        run: allure generate ./reports/allure-results --clean -o ./allure-report
 
       - name: Upload Allure Report 📈
         if: always()
