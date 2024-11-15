@@ -53,8 +53,8 @@ jobs:
     if: success()
 
     steps:
-      # Checkout the main branch (or the branch you're working with)
-      - name: Checkout repository 🛠️
+      # Checkout the repository 🛠️
+      - name: Checkout repository
         uses: actions/checkout@v4
 
       # Checkout the allure-results branch to access the old results
@@ -63,40 +63,39 @@ jobs:
           git fetch origin allure-results
           git checkout allure-results
 
-      # Download Allure Report Artifact
+      # Create 'complete' directory to store results
+      - name: Create 'complete' directory 📁
+        run: mkdir -p ./complete
+
+      # Download Allure Results Artifact directly into 'complete' directory
       - name: Download Allure Results Artifact 📥
         uses: actions/download-artifact@v4
         with:
           name: allure-results
-          path: ./new-allure-results # The folder where the artifact will be saved
+          path: ./complete
 
-      # Ensure old and new results exist 🔄
-      - name: Combine old and new results 🔄
-        run: |
-          mkdir -p ./reports/allure-results/old
-          mkdir -p ./reports/allure-results/latest
+      # Download previous Allure Results Artifact (if exists)
+      - name: Download previous Allure Results Artifact 📥
+        uses: actions/download-artifact@v4
+        with:
+          name: previous-allure-results
+          path: ./complete
 
-          # Copy old results from the 'allure-results' branch to the 'old' folder
-          cp -r ./allure-results/* ./reports/allure-results/old/ || echo "No old results to copy"
-
-          # Copy new results to the 'latest' folder
-          cp -r ./new-allure-results/* ./reports/allure-results/latest/
-
-          # Combine old and new results in the 'latest' folder
-          cp -r ./reports/allure-results/old/* ./reports/allure-results/latest/
-
-      - name: Install Allure CLI 📦
-        run: npm install -g allure-commandline --save-dev
-
-      # Generate the Allure Report 📊
+      # Generate Allure Report 📊
       - name: Generate Allure Report 📈
-        run: |
-          allure generate ./reports/allure-results/latest --clean -o ./allure-report
+        run: allure generate ./complete --clean -o ./allure-report
+
+      # Upload combined Allure Results as artifact for future runs 📦
+      - name: Upload Allure Results as artifact 📥
+        uses: actions/upload-artifact@v4
+        with:
+          name: previous-allure-results
+          path: ./complete
 
       # Deploy Allure Report to GitHub Pages 🌍
       - name: Deploy Allure Report to GitHub Pages 📤
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GH_TOKEN }}
-          publish_dir: ./allure-report # Path to the Allure report
+          publish_dir: ./allure-report
           publish_branch: gh-pages
