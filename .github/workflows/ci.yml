@@ -1,6 +1,12 @@
 name: WebDriverIO CI
 
 on:
+  workflow_dispatch:
+    inputs:
+      trigger:
+        description: 'Trigger the workflow (set to true)'
+        required: true
+        default: 'false'
   push:
     branches:
       - main
